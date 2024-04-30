@@ -19,7 +19,6 @@ import time
 from multiprocessing.pool import ThreadPool
 from functools import partial
 from faster_whisper.utils import available_models
-
 from m3u8 import PlaylistList, SegmentList
 
 translated_chunk_paths = {}
@@ -135,11 +134,17 @@ def http_listener(server_address: Tuple[str, int]):
     server.serve_forever()
 
 
+def normalise_chunk_uri(chunk_uri: str) -> str:
+    chunk_uri = os.path.splitext(chunk_uri)[0] + '.ts'
+    chunk_uri = chunk_uri.replace('../', '').replace('./', '')
+    return '/' + chunk_uri
+
+
 def download_and_transcribe_wrapper(segment: Segment, session: requests.Session, model: WhisperModel, base_uri: str,
                                     chunk_dir: str, hard_subs: bool, translate: bool, beam_size: int,
                                     vad_filter: bool, language: Optional[str]):
     chunk_url = os.path.join(base_uri, segment.uri)
-    chunk_uri = '/' + os.path.splitext(segment.uri)[0] + '.ts'
+    chunk_uri = normalise_chunk_uri(segment.uri)
     if chunk_uri not in translated_chunk_paths:
         translated_chunk_paths[chunk_uri] = download_chunk_and_transcribe(session, model, chunk_url, chunk_uri,
                                                                           chunk_dir, hard_subs, translate,
@@ -225,7 +230,7 @@ if __name__ == '__main__':
 
                 current_segments = []
                 for segment in chunk_list.segments:
-                    segment_name = '/' + os.path.splitext(segment.uri)[0] + '.ts'
+                    segment_name = normalise_chunk_uri(segment.uri)
                     segment.uri = os.path.join(http_base_url, segment_name)
                     current_segments.append(segment_name)
 
