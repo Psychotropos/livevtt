@@ -21,9 +21,9 @@ livevtt -u <URL> [-s] [-l <BIND_ADDRESS>] [-p <BIND_PORT>] [-m <MODEL>] [-b <BEA
 - `-m, --model`: Whisper model to use (defaults to large).
 - `-b, --beam-size`: Beam size to use (defaults to 5).
 - `-c, --use-cuda`: Use CUDA where available. Defaults to true.
-- `-t, --translate`: If set to false, only provides a transcription for the given stream. Defaults to true.
+- `-t, --transcribe`: If set, transcribes rather than translates the given stream.
 - `-vf, --vad-filter`: Whether to utilize the Silero VAD model to try and filter out silences. Defaults to false.
-- `-la, --language`: The original language of the stream, if known/not multi-lingual. Can be left unset.
+- `-la, --language`: The original language of the stream, if known/not multilingual. Can be left unset.
 - `-ua, --user-agent`: User agent to use to retrieve playlists/stream chunks (defaults to 'VLC/3.0.18 LibVLC/3.0.18').
 
 ## Accessing Transcribed Stream

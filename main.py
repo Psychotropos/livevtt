@@ -165,9 +165,8 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--beam-size', type=int, help='Beam size to use (defaults to 5)', default=5)
     parser.add_argument('-c', '--use-cuda', type=bool, help='Use CUDA where available. Defaults to true',
                         default=True)
-    parser.add_argument('-t', '--translate', type=bool, help='If set to false, only provides a '
-                                                             'transcription for the given stream. Defaults to true.',
-                        default=True)
+    parser.add_argument('-t', '--transcribe', action='store_true',
+                        help='If set, transcribes rather than translates the given stream.')
     parser.add_argument('-vf', '--vad-filter', type=bool, help='Whether to utilise the Silero VAD model '
                                                                'to try and filter out silences. Defaults to false.',
                         default=False)
@@ -175,6 +174,7 @@ if __name__ == '__main__':
                                                             'if known/not multi-lingual. Can be left unset.')
     parser.add_argument('-ua', '--user-agent', type=str, help='User agent to use to retrieve playlists / '
                                                               'stream chunks.', default='VLC/3.0.18 LibVLC/3.0.18')
+
     args = parser.parse_args()
 
     threading.Thread(target=http_listener, daemon=True, args=((args.bind_address, args.bind_port),)).start()
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                 with ThreadPool(processes=int(multiprocessing.cpu_count() / 2)) as transcribe_pool:
                     transcribe_pool.map(partial(download_and_transcribe_wrapper, session=session, model=model,
                                                 base_uri=chunk_list.base_uri, chunk_dir=chunk_dir,
-                                                hard_subs=args.hard_subs, translate=args.translate,
+                                                hard_subs=args.hard_subs, translate=not args.transcribe,
                                                 beam_size=args.beam_size, vad_filter=args.vad_filter,
                                                 language=args.language), chunk_list.segments)
 
