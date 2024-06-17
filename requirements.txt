@@ -2,3 +2,4 @@ faster-whisper
 m3u8
 requests
 torch
+numpy~=1.0
